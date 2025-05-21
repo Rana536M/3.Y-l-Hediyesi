@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Futbolcu Sıralama Oyunu</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0;
+      background: #f4f4f4;
+    }
+
+    h2 {
+      margin-top: 20px;
+    }
+
+    .container {
+      display: flex;
+      margin-top: 40px;
+      gap: 100px;
+    }
+
+    .drop-zone, .photo {
+      width: 120px;
+      height: 120px;
+      border: 2px dashed #ccc;
+      margin-bottom: 20px;
+      background-color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .drop-zone {
+      flex-direction: column;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    .photo img {
+      max-width: 100%;
+      max-height: 100%;
+      cursor: grab;
+    }
+
+    #winMessage {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 28px;
+      background: white;
+      border: 2px solid green;
+      padding: 20px 40px;
+      color: green;
+      display: none;
+      z-index: 999;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    }
+  </style>
+</head>
+<body>
+
+<h2>Futbolcuları İyiden Kötüye Sırala (1 en iyi, 5 en kötü)</h2>
+
+<div class="container">
+  <!-- Sıralama kutuları -->
+  <div id="dropArea">
+    <div class="drop-zone" data-index="0">1</div>
+    <div class="drop-zone" data-index="1">2</div>
+    <div class="drop-zone" data-index="2">3</div>
+    <div class="drop-zone" data-index="3">4</div>
+    <div class="drop-zone" data-index="4">5</div>
+  </div>
+
+  <!-- Sürüklenebilir fotoğraflar -->
+  <div id="photos">
+    <div class="photo" draggable="true" data-id="3"><img src="images/foto4.png"></div>
+    <div class="photo" draggable="true" data-id="0"><img src="images/foto1.png"></div>
+    <div class="photo" draggable="true" data-id="2"><img src="images/foto3.png"></div>
+    <div class="photo" draggable="true" data-id="1"><img src="images/foto2.png"></div>
+    <div class="photo" draggable="true" data-id="4"><img src="images/foto5.png"></div>
+  </div>
+</div>
+
+<div id="winMessage">🎉 Aynen Öylee Eheheheh 🎉</div>
+
+<script>
+  const dropZones = document.querySelectorAll('.drop-zone');
+  const photos = document.querySelectorAll('.photo');
+  const correctOrder = ["0", "1", "2", "3", "4"]; // doğru sıralama
+  let winShown = false;
+
+  photos.forEach(photo => {
+    photo.addEventListener('dragstart', e => {
+      e.dataTransfer.setData("text/plain", photo.dataset.id);
+      e.dataTransfer.setData("text/html", photo.outerHTML);
+      setTimeout(() => {
+        photo.style.display = "none";
+      }, 0);
+    });
+
+    photo.addEventListener('dragend', () => {
+      photo.style.display = "flex";
+    });
+  });
+
+  dropZones.forEach(zone => {
+    zone.addEventListener('dragover', e => {
+      e.preventDefault();
+      zone.style.borderColor = "#666";
+    });
+
+    zone.addEventListener('dragleave', e => {
+      zone.style.borderColor = "#ccc";
+    });
+
+    zone.addEventListener('drop', e => {
+      e.preventDefault();
+      zone.style.borderColor = "#ccc";
+
+      // bırakılan foto
+      const id = e.dataTransfer.getData("text/plain");
+      const imgHTML = e.dataTransfer.getData("text/html");
+
+      zone.dataset.photoId = id;
+      zone.innerHTML = imgHTML;
+
+      // foto yeniden draggable kalsın:
+      const imgDiv = zone.querySelector('.photo');
+      if (imgDiv) {
+        imgDiv.draggable = true;
+        imgDiv.addEventListener('dragstart', e => {
+          e.dataTransfer.setData("text/plain", imgDiv.dataset.id);
+          e.dataTransfer.setData("text/html", imgDiv.outerHTML);
+          setTimeout(() => {
+            imgDiv.style.display = "none";
+          }, 0);
+        });
+
+        imgDiv.addEventListener('dragend', () => {
+          imgDiv.style.display = "flex";
+        });
+      }
+
+      checkWin();
+    });
+  });
+
+  function checkWin() {
+    const currentOrder = Array.from(dropZones).map(zone => zone.dataset.photoId || null);
+    if (JSON.stringify(currentOrder) === JSON.stringify(correctOrder)) {
+      if (!winShown) {
+        document.getElementById("winMessage").style.display = "block";
+        winShown = true;
+      }
+    } else {
+      document.getElementById("winMessage").style.display = "none";
+      winShown = false;
+    }
+  }
+</script>
+
+</body>
+</html>

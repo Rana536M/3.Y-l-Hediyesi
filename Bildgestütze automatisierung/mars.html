@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Mars Oyunu</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #b66dcb;
+      font-family: sans-serif;
+    }
+
+    .char {
+      position: absolute;
+      width: 100px;
+      border-radius: 50%;
+    }
+
+    #mars {
+      position: absolute;
+      width: 120px;
+      cursor: grab;
+      transition: all 0.2s ease;
+    }
+
+    #winText {
+      position: absolute;
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 40px;
+      color: rgb(233, 187, 20);
+      display: none;
+    }
+
+    .heart {
+      position: absolute;
+      font-size: 24px;
+      animation: floatUp 2s ease-out forwards;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(0) scale(1); opacity: 1; }
+      100% { transform: translateY(-150px) scale(1.5); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<h2 id="instructions">Mars'ı kişilere sürükle!</h2>
+<h1 id="winText">🎉 Tebrikler Mars'a kavuştun' 🎉</h1>
+
+<!-- Karakterler -->
+<img src="images/ben.png" class="char" style="top: 50px; left: 100px;" id="ben">
+<img src="images/ayşeteyze.png" class="char" style="top:  500px; left: 300px;" id="ayse">
+<img src="images/merveabla.png" class="char" style="top: 350px; left: 50px;" id="merve">
+<img src="images/eyüpamca.png" class="char" style="top: 300px; left: 1000px;" id="eyüp">
+<img src="images/yunus.png" class="char" style="top: 500px; left: 900px;" id="erkek">
+
+<!-- Mars -->
+<img src="images/normalmars.png" id="mars" style="top: 150px; left: 300px;">
+
+<script>
+  const mars = document.getElementById("mars");
+  const winText = document.getElementById("winText");
+  let isDragging = false, offsetX, offsetY;
+
+  const karakterler = [
+    { id: "ben", type: "hırlı" },
+    { id: "ayse", type: "hırlı" },
+    { id: "eyüp", type: "hırlı" },
+    { id: "merve", type: "hırlı" },
+    { id: "erkek", type: "mutlu" }
+  ];
+
+  function getCenter(el) {
+    const rect = el.getBoundingClientRect();
+    return {
+      x: rect.left + rect.width / 2,
+      y: rect.top + rect.height / 2
+    };
+  }
+
+  mars.addEventListener("mousedown", e => {
+    isDragging = true;
+    offsetX = e.offsetX;
+    offsetY = e.offsetY;
+    mars.style.cursor = "grabbing";
+  });
+
+  document.addEventListener("mouseup", () => {
+    isDragging = false;
+    mars.style.cursor = "grab";
+  });
+
+  document.addEventListener("mousemove", e => {
+    if (!isDragging) return;
+
+    const x = e.clientX - offsetX;
+    const y = e.clientY - offsetY;
+    mars.style.left = x + "px";
+    mars.style.top = y + "px";
+
+    const marsCenter = {
+      x: x + mars.offsetWidth / 2,
+      y: y + mars.offsetHeight / 2
+    };
+
+    let found = false;
+
+    for (const char of karakterler) {
+      const el = document.getElementById(char.id);
+      const center = getCenter(el);
+
+      const dx = center.x - marsCenter.x;
+      const dy = center.y - marsCenter.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      if (distance < 100) {
+        found = true;
+
+        if (char.type === "mutlu") {
+          mars.src = "images/mutlumars.png";
+          winText.style.display = "block";
+          showHeart(marsCenter.x, marsCenter.y);
+        } else {
+          mars.src = "images/sinirlimars.png";
+          winText.style.display = "none";
+        }
+        break;
+      }
+    }
+
+    if (!found) {
+      mars.src = "images/normalmars.png";
+      winText.style.display = "none";
+    }
+  });
+
+  function showHeart(x, y) {
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.style.left = x + "px";
+    heart.style.top = y + "px";
+    heart.innerHTML = "💖";
+    document.body.appendChild(heart);
+
+    setTimeout(() => {
+      document.body.removeChild(heart);
+    }, 2000);
+  }
+</script>
+
+</body>
+</html>

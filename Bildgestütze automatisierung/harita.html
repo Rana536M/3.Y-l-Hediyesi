@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>💖 SENİNLE 3 YIL 💖</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background-image: url("images/haritaarkaplan.png"); /* Arka plan olarak bir anı haritası kullan */
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      font-family: sans-serif;
+    }
+
+    .konum {
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      background-color: rgba(236, 145, 145, 0.6);
+      border-radius: 50%;
+      text-align: center;
+      line-height: 120px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .konum:hover {
+      transform: scale(1.1);
+      background-color: rgba(228, 77, 77, 0.8);
+    }
+
+    #hafıza {
+      top: 75%;
+      left: 5%;
+    }
+
+    #mars {
+      top: 58%;
+      left: 40%;
+    }
+
+    #sıralama {
+      top: 40%;
+      left: 20%;
+    }
+
+    #quiz {
+      top: 30%;
+      left: 60%;
+    }
+    #puzzle {
+      top: 25%;
+      left: 85%;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="hafıza" class="konum" onclick="goTo('hafiza.html')">Hafıza</div>
+  <div id="mars" class="konum" onclick="goTo('mars.html')">Mars</div>
+  <div id="sıralama" class="konum" onclick="goTo('sıralama.html')">Sıralama</div>
+  <div id="quiz" class="konum" onclick="goTo('quiz.html')">Quiz</div>
+  <div id="puzzle" class="konum" onclick="goTo('puzzle.html')">Puzzle</div>
+  <script>
+    function goTo(page) {
+      window.location.href = page;
+    }
+  </script>
+
+</body>
+</html>

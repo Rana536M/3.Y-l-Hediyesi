@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Quiz Oyunu</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px;
+    }
+
+    #quiz-box {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      max-width: 500px;
+      width: 100%;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    .option {
+      background: #b06abb;
+      padding: 10px 20px;
+      margin: 10px 0;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .option:hover {
+      background: #cc95df;
+    }
+
+    .correct {
+      background-color: #c8f7c5 !important;
+      color: green;
+    }
+
+    .wrong {
+      background-color: #f7c5c5 !important;
+      color: red;
+    }
+
+    #score {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+
+    #final {
+      font-size: 24px;
+      margin-top: 30px;
+      display: none;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<div id="quiz-box">
+  <h2 id="question">Soru buraya gelecek</h2>
+  <div id="options"></div>
+  <div id="score">Puan: 100</div>
+</div>
+
+<div id="final">🎉 Tebriklerrr Balımmm! <br><span id="finalScore"></span></div>
+
+<script>
+  const questions = [
+    {
+      question: "Beraber İlk İzlediğimiz Film?",
+      options: [
+        { text: "Kuzuların Sessizliği", correct: true },
+        { text: "Karpuz Kabuğundan Gemiler Yapmak", correct: false },
+        { text: "13. Kat", correct: false }
+      ]
+    },
+    {
+      question: "Beraber Gittiğimiz İlk Konser?",
+      options: [
+        { text: "Madrigal", correct: false },
+        { text: "Murat Dalkılıç", correct: true },
+        { text: "Birileri(TAÜ Fest)", correct: false }
+      ]
+    },
+    {
+      question: "Hangi Yemeği Beraber Yapmadık?",
+      options: [
+        { text: "Pide", correct: false },
+        { text: "İçli Köfte", correct: true },
+        { text: "Yağlama", correct: false }
+        
+      ]
+    },
+    {
+      question: "Hangi Yemeği Beraber Yapmadık?",
+      options: [
+        { text: "Pizza", correct: false },
+        { text: "Köfte Patates", correct: true },
+        { text: "Hamburger", correct: false }
+      ]
+    },
+    {
+      question: "Beni İlk Yüz Yüze Gördüğün Yer",
+      options: [
+        { text: "Hasan Abinin Kantinin Önü", correct: false },
+        { text: "Çimenlik Alan", correct: false },
+        { text: "YDYO Binası", correct: true }
+      ]
+    }
+  ];
+
+  let currentQuestion = 0;
+  let score = 100;
+
+  const questionEl = document.getElementById("question");
+  const optionsEl = document.getElementById("options");
+  const scoreEl = document.getElementById("score");
+  const finalEl = document.getElementById("final");
+  const finalScoreEl = document.getElementById("finalScore");
+
+  function showQuestion() {
+    const q = questions[currentQuestion];
+    questionEl.textContent = q.question;
+    optionsEl.innerHTML = "";
+
+    q.options.forEach(option => {
+      const btn = document.createElement("div");
+      btn.classList.add("option");
+      btn.textContent = option.text;
+      btn.addEventListener("click", () => handleAnswer(btn, option.correct));
+      optionsEl.appendChild(btn);
+    });
+  }
+
+  function handleAnswer(element, isCorrect) {
+    if (isCorrect) {
+      element.classList.add("correct");
+      setTimeout(() => {
+        currentQuestion++;
+        if (currentQuestion < questions.length) {
+          showQuestion();
+        } else {
+          quizFinished();
+        }
+      }, 700);
+    } else {
+      element.classList.add("wrong");
+      score = Math.max(0, score - 20);
+      scoreEl.textContent = `Puan: ${score}`;
+    }
+  }
+
+  function quizFinished() {
+    document.getElementById("quiz-box").style.display = "none";
+    finalEl.style.display = "block";
+    finalScoreEl.textContent = `Puanınız: ${score}`;
+  }
+
+  showQuestion();
+</script>
+
+</body>
+</html>
